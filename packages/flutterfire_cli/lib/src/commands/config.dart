@@ -56,7 +56,7 @@ class ConfigCommand extends FlutterFireCommand {
     argParser.addOption(
       kPlatformsFlag,
       valueHelp: 'platforms',
-      mandatory: isCI,
+      mandatory: false,
       help:
           'Optionally specify the platforms to generate configuration options for '
           'as a comma separated list. For example "android,ios,macos,web,linux,windows".',
@@ -289,13 +289,7 @@ class ConfigCommand extends FlutterFireCommand {
       );
       return deprecatedValue;
     }
-
-    if (isCI) {
-      throw FirebaseCommandException(
-        'configure',
-        'Please provide value for android-package-name.',
-      );
-    }
+    
     return null;
   }
 
@@ -304,12 +298,6 @@ class ConfigCommand extends FlutterFireCommand {
     // TODO validate bundleId is valid if provided
     if (value != null) return value;
 
-    if (isCI) {
-      throw FirebaseCommandException(
-        'configure',
-        'Please provide value for ios-bundle-id.',
-      );
-    }
     return null;
   }
 
@@ -318,12 +306,6 @@ class ConfigCommand extends FlutterFireCommand {
 
     if (value != null) return value;
 
-    if (isCI) {
-      throw FirebaseCommandException(
-        'configure',
-        'Please provide value for web-app-id.',
-      );
-    }
     return null;
   }
 
@@ -332,12 +314,6 @@ class ConfigCommand extends FlutterFireCommand {
 
     if (value != null) return value;
 
-    if (isCI) {
-      throw FirebaseCommandException(
-        'configure',
-        'Please provide value for $kWindowsAppIdFlag.',
-      );
-    }
     return null;
   }
 
@@ -346,12 +322,6 @@ class ConfigCommand extends FlutterFireCommand {
     // TODO validate bundleId is valid if provided
     if (value != null) return value;
 
-    if (isCI) {
-      throw FirebaseCommandException(
-        'configure',
-        'Please provide value for macos-bundle-id.',
-      );
-    }
     return null;
   }
 
@@ -421,7 +391,7 @@ class ConfigCommand extends FlutterFireCommand {
     var projectListFail = false;
     selectedProjectId ??= await firebase.getDefaultFirebaseProjectId();
 
-    if ((isCI || yes) && selectedProjectId == null) {
+    if (yes && selectedProjectId == null) {
       throw FirebaseProjectRequiredException();
     }
 
@@ -531,7 +501,7 @@ class ConfigCommand extends FlutterFireCommand {
         kLinux: platforms.contains(kLinux) ||
             platforms.isEmpty && flutterApp!.linux,
     };
-    if (platforms.isNotEmpty || isCI || yes) {
+    if (platforms.isNotEmpty || yes) {
       final selectedPlatformsString = selectedPlatforms.entries
           .where((e) => e.value)
           .map((e) => e.key)
